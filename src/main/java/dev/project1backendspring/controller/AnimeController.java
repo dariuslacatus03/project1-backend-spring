@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @RestController
 @CrossOrigin
@@ -46,11 +49,19 @@ public class AnimeController {
     @GetMapping("/shows")
     ResponseEntity<?> allShows(){
         try{
-            return ResponseEntity.ok().body(animeService.getAllAnimes());
+            List<AnimeDTO> animeDTOList = animeService.getAllAnimes()
+                    .stream()
+                    .map(this::mapAnimeToDTO)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok().body(animeDTOList);
         }
         catch (Exception exception){
             return ResponseEntity.internalServerError().body(exception.getMessage());
         }
+    }
+    private record AnimeDTO(Long id, String animeName, int nrOfEpisodes) {}
+    private AnimeDTO mapAnimeToDTO(Anime anime) {
+        return new AnimeDTO(anime.getId(), anime.getAnimeName(), anime.getNrOfEpisodes());
     }
 
     @PutMapping("/shows/update/{id}")
