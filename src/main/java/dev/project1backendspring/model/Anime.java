@@ -9,12 +9,6 @@ import lombok.*;
 @Entity
 @Getter @Setter @AllArgsConstructor @RequiredArgsConstructor @NoArgsConstructor @ToString
 public class Anime {
-//    id: 4,
-//    name: 'Dragon Ball Z',
-//    cover: 'none',
-//    nrOfEpisodes: 291,
-//    genre: 'Action',
-//    description: 'This is the description of Dragon Ball Z'
     private @Id @GeneratedValue Long id;
     @NonNull
     private String animeName;
