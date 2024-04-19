@@ -2,12 +2,18 @@ package dev.project1backendspring.service;
 
 import dev.project1backendspring.model.Anime;
 import dev.project1backendspring.model.RepositoryException;
+import dev.project1backendspring.model.User;
 import dev.project1backendspring.repository.AnimeRepository;
+import dev.project1backendspring.repository.UserRepository;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import com.github.javafaker.Faker;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,37 +24,16 @@ public class AnimeService {
     @Autowired
     AnimeRepository animeRepository;
 
-
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
-    public AnimeService(AnimeRepository animeRepo)
+    public AnimeService(AnimeRepository animeRepo, EntityManager entityMan)
     {
         this.animeRepository = animeRepo;
+        this.entityManager = entityMan;
+        //vvv COMMENT OUT WHEN RUNNING TESTS
         this.generateFakeAnimes(48);
-//        Anime anime1 = new Anime("Dragon Ball", "none", 126, "Action", "This is the description of Dragon Ball");
-//        Anime anime2 = new Anime("Hunter x Hunter", "none", 126, "Adventure", "This is the description of Hunter x Hunter");
-//        Anime anime3 = new Anime("Sailor Moon", "none", 250, "Shojo", "This is the description of Sailor Moon");
-//        Anime anime4 = new Anime("Dragon Ball Z", "none", 291, "Action", "This is the description of Dragon Ball Z");
-//        Anime anime5 = new Anime("One Piece", "none", 1098, "Adventure", "This is the description of One Piece");
-//        Anime anime6 = new Anime("Jojo's Bizzare Adventure", "none", 190, "Adventure", "This is the description of Jojo's Bizzare Adventure");
-//        Anime anime7 = new Anime("Baki", "none", 40, "Action", "This is the description of Baki");
-//        Anime anime8 = new Anime("One Punch Man", "none", 24, "Comedy", "This is the description of One Punch Man");
-//        Anime anime9 = new Anime("Spy x Family", "none", 37, "Comedy", "This is the description of Spy x Family");
-//        Anime anime10 = new Anime("Dragon Ball Super", "none", 131, "Action", "This is the description of Dragon Ball Super");
-//        Anime anime11 = new Anime("Dragon Ball GT", "none", 64, "Action", "This is the description of Dragon Ball GT");
-//        Anime anime12 = new Anime("Jujutsu Kaisen", "none", 70, "Action", "This is the description of Jujutsu Kaisen");
-//        this.animeRepository.save(anime1);
-//        this.animeRepository.save(anime2);
-//        this.animeRepository.save(anime3);
-//        this.animeRepository.save(anime4);
-//        this.animeRepository.save(anime5);
-//        this.animeRepository.save(anime6);
-//        this.animeRepository.save(anime7);
-//        this.animeRepository.save(anime8);
-//        this.animeRepository.save(anime9);
-//        this.animeRepository.save(anime10);
-//        this.animeRepository.save(anime11);
-//        this.animeRepository.save(anime12);
     }
 
     public void addAnime(Anime animeToAdd) throws RepositoryException
@@ -86,7 +71,6 @@ public class AnimeService {
             System.out.println("Bad Service");
             throw new RepositoryException("Couldn't get all animes");
         }
-
     }
 
     public void updateAnime(Long id, Anime updatedAnime) throws RepositoryException
@@ -118,8 +102,20 @@ public class AnimeService {
         }
     }
 
+    @Transactional
+    public List<User> getAllUsers() {
+        return entityManager.createQuery("SELECT u FROM User u", User.class).getResultList();
+    }
     public void generateFakeAnimes(int numberOfAnimes)
     {
+        List<User> USERS = getAllUsers();
+        if (USERS.isEmpty()) {
+            return;
+        }
+        for (User user : USERS)
+        {
+            System.out.println(user.getUserName());
+        }
         String[] ANIME_NAMES = {
                 "Naruto", "One Piece", "Dragon Ball Z", "Attack on Titan", "My Hero Academia",
                 "Death Note", "Fullmetal Alchemist", "Tokyo Ghoul", "Sword Art Online", "Demon Slayer",
@@ -145,16 +141,17 @@ public class AnimeService {
             anime.setNrOfEpisodes(faker.number().numberBetween(1, 1000));
             anime.setGenre(ANIME_GENRES[faker.random().nextInt(ANIME_GENRES.length)]);
             anime.setDescription("This is the description of " + ANIME_NAMES[faker.random().nextInt(ANIME_NAMES.length)]);
+            anime.setUser(USERS.get(i % USERS.size()));
             animeRepository.save(anime);
         }
     }
 
-    @Scheduled(fixedDelay = 5000)
-    @Async
-    public void generateNewAnime()
-    {
-        generateFakeAnimes(1);
-    }
+//    @Scheduled(fixedDelay = 5000)
+//    @Async
+//    public void generateNewAnime()
+//    {
+//        generateFakeAnimes(1);
+//    }
 
 
 }

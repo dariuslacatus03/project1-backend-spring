@@ -2,8 +2,10 @@ package dev.project1backendspring;
 
 import dev.project1backendspring.model.Anime;
 import dev.project1backendspring.model.RepositoryException;
+import dev.project1backendspring.model.User;
 import dev.project1backendspring.repository.AnimeRepository;
 import dev.project1backendspring.service.AnimeService;
+import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,11 +18,15 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import jakarta.persistence.EntityManager;
 
 @ExtendWith(MockitoExtension.class)
 public class AnimeServiceTest {
     @Mock
-    AnimeRepository animeRepository;
+    private AnimeRepository animeRepository;
+
+    @Mock
+    private EntityManager entityManager;
 
     @InjectMocks
     private AnimeService animeService;
@@ -28,15 +34,17 @@ public class AnimeServiceTest {
     @Test
     public void testAddAnime() throws RepositoryException {
 
-        Anime newAnime = new Anime(1L, "Dragon Ball Daima", "none", 1, "Action", "Description");
+        Anime newAnime = new Anime("Dragon Ball Daima", "none", 1, "Action", "Description");
 
         when(animeRepository.save(any(Anime.class))).thenReturn(newAnime);
         animeService.addAnime(newAnime);
+
+        verify(animeRepository, times(1)).save(newAnime);
     }
 
     @Test
     public void testRemoveAnime() throws RepositoryException {
-        Anime newAnime = new Anime(1L, "Dragon Ball Daima", "none", 1, "Action", "Description");
+        Anime newAnime = new Anime("Dragon Ball Daima", "none", 1, "Action", "Description");
         animeService.deleteAnime(newAnime.getId());
         verify(animeRepository).deleteById(newAnime.getId());
     }
@@ -80,7 +88,7 @@ public class AnimeServiceTest {
 
     @Test void updateAnime_Found() throws RepositoryException {
         //Optional<Tank> tankToUpdate = tankRepository.findById(id);
-        Anime newAnime = new Anime(1L, "Dragon Ball Daima", "none", 1, "Action", "Description");
+        Anime newAnime = new Anime("Dragon Ball Daima", "none", 1, "Action", "Description");
         when(animeRepository.findById(newAnime.getId())).thenReturn(Optional.of(newAnime));
 
         when(animeRepository.save(newAnime)).thenReturn(newAnime);
@@ -91,7 +99,7 @@ public class AnimeServiceTest {
 
     @Test void getAll_Working() throws RepositoryException {
 
-        Anime newAnime = new Anime(1L, "Dragon Ball Daima", "none", 1, "Action", "Description");
+        Anime newAnime = new Anime("Dragon Ball Daima", "none", 1, "Action", "Description");
         List<Anime> list = List.of(newAnime, newAnime);
 
         when(animeRepository.findAll()).thenReturn(list);
@@ -104,6 +112,20 @@ public class AnimeServiceTest {
 
         doThrow(new RuntimeException()).when(animeRepository).findAll();
         assertThatThrownBy(()->animeService.getAllAnimes()).isInstanceOf(RepositoryException.class);
+    }
+
+    @Test
+    public void testGenerateFakeAnimes() throws RepositoryException {
+        // Mocking EntityManager behavior
+        TypedQuery<User> query = mock(TypedQuery.class);
+        List<User> userList = List.of(new User("user1"), new User("user2"));
+        when(entityManager.createQuery(anyString(), eq(User.class))).thenReturn(query);
+        when(query.getResultList()).thenReturn(userList);
+
+        animeService.generateFakeAnimes(2);
+
+        // Verifying save is called with the correct Anime objects
+        verify(animeRepository, times(2)).save(any(Anime.class));
     }
 
 }
