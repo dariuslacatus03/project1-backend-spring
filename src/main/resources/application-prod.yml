@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: project1-backend-spring
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+  datasource:
+    url: jdbc:mysql://root:afvSDhXBNNQPsfBzOQCpjWTKAXZdRKWp@monorail.proxy.rlwy.net:27666/railway
+    username: root
+    password: afvSDhXBNNQPsfBzOQCpjWTKAXZdRKWp
