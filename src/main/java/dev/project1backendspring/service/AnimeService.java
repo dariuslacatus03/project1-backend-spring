@@ -24,14 +24,18 @@ public class AnimeService {
     @Autowired
     AnimeRepository animeRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
-    public AnimeService(AnimeRepository animeRepo, EntityManager entityMan)
+    public AnimeService(AnimeRepository animeRepo, EntityManager entityMan, UserRepository userRepo)
     {
         this.animeRepository = animeRepo;
         this.entityManager = entityMan;
+        this.userRepository = userRepo;
         //vvv COMMENT OUT WHEN RUNNING TESTS
         this.generateFakeAnimes(48);
     }
@@ -40,6 +44,10 @@ public class AnimeService {
     {
         try
         {
+            if (!userRepository.existsById(animeToAdd.getUser().getId())) {
+                throw new RepositoryException("User does not exist");
+            }
+
             this.animeRepository.save(animeToAdd);
         }
         catch (Exception exception)
@@ -102,13 +110,13 @@ public class AnimeService {
         }
     }
 
-    @Transactional
-    public List<User> getAllUsers() {
-        return entityManager.createQuery("SELECT u FROM User u", User.class).getResultList();
-    }
+//    @Transactional
+//    public List<User> getAllUsers() {
+//        return entityManager.createQuery("SELECT u FROM User u", User.class).getResultList();
+//    }
     public void generateFakeAnimes(int numberOfAnimes)
     {
-        List<User> USERS = getAllUsers();
+        List<User> USERS = userRepository.findAll();
         if (USERS.isEmpty()) {
             return;
         }

@@ -5,6 +5,7 @@ import dev.project1backendspring.model.RepositoryException;
 import dev.project1backendspring.model.User;
 import dev.project1backendspring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 @Service
 public class UserService {
+
     @Autowired
     UserRepository userRepository;
 
@@ -19,19 +21,37 @@ public class UserService {
     public UserService(UserRepository userRepo)
     {
         this.userRepository = userRepo;
-        User user1 = new User("lacatusdarius");
-        User user2 = new User("contiumario");
-        User user3 = new User("lucaobis");
-        this.userRepository.save(user1);
-        this.userRepository.save(user2);
-        this.userRepository.save(user3);
+        User user1 = new User("lacatusdarius", "$2a$12$tBNnl9fuu45Ep2WLtKZMS.8kCYRWee1tITnHE19uerDQJWM3e2mSK");
+        User user2 = new User("contiumario", "$2a$12$tBNnl9fuu45Ep2WLtKZMS.8kCYRWee1tITnHE19uerDQJWM3e2mSK");
+        User user3 = new User("lucaobis", "$2a$12$tBNnl9fuu45Ep2WLtKZMS.8kCYRWee1tITnHE19uerDQJWM3e2mSK");
+        if (this.userRepository.findByUserName("lacatusdarius") == null)
+        {
+            this.userRepository.save(user1);
+        }
+        if (this.userRepository.findByUserName("contiumario") == null)
+        {
+            this.userRepository.save(user2);
+        }
+        if (this.userRepository.findByUserName("lucaobis") == null)
+        {
+            this.userRepository.save(user3);
+        }
     }
 
-    public void addUser(User userToAdd) throws RepositoryException
+    public User addUser(User userToAdd, BCryptPasswordEncoder encoder) throws RepositoryException
     {
         try
         {
-            this.userRepository.save(userToAdd);
+            if (userRepository.findByUserName(userToAdd.getUserName()) == null)
+            {
+                userToAdd.setPassword(encoder.encode(userToAdd.getPassword()));
+                this.userRepository.save(userToAdd);
+                return userToAdd;
+            }
+            else
+            {
+                return null;
+            }
         }
         catch (Exception exception)
         {

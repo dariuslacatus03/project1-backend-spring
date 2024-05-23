@@ -8,6 +8,7 @@ import lombok.*;
 
 @Entity
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor @ToString
+@RequiredArgsConstructor
 @Table(name = "Users")
 public class User {
     @Id @GeneratedValue
@@ -16,8 +17,6 @@ public class User {
     @NonNull
     private String userName;
 
-    public User(@NonNull String userName)
-    {
-        this.userName = userName;
-    }
+    @NonNull
+    private String password;
 }

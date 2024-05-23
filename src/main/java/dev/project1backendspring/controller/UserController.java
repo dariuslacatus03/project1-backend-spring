@@ -7,6 +7,7 @@ import dev.project1backendspring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +31,7 @@ public class UserController {
     @Transactional
     public ResponseEntity<String> newUser(@RequestBody User newUser){
         try{
-            userService.addUser(newUser);
+            userService.addUser(newUser, new BCryptPasswordEncoder(10));
             return ResponseEntity.ok().body("User added");
         }
         catch(RepositoryException exception){

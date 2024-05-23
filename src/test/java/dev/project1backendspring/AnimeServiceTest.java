@@ -4,6 +4,7 @@ import dev.project1backendspring.model.Anime;
 import dev.project1backendspring.model.RepositoryException;
 import dev.project1backendspring.model.User;
 import dev.project1backendspring.repository.AnimeRepository;
+import dev.project1backendspring.repository.UserRepository;
 import dev.project1backendspring.service.AnimeService;
 import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,8 @@ public class AnimeServiceTest {
     @Mock
     private AnimeRepository animeRepository;
 
+    @Mock
+    private UserRepository userRepository;
     @Mock
     private EntityManager entityManager;
 

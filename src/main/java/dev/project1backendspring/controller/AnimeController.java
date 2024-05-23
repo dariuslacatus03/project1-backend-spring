@@ -2,6 +2,7 @@ package dev.project1backendspring.controller;
 
 import dev.project1backendspring.model.Anime;
 import dev.project1backendspring.model.RepositoryException;
+import dev.project1backendspring.model.User;
 import dev.project1backendspring.service.AnimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -84,9 +85,9 @@ public class AnimeController {
         }
     }
 
-    private record AnimeDTO2(Long id, String animeName, int nrOfEpisodes, String genre) {}
+    private record AnimeDTO2(Long id, String animeName, int nrOfEpisodes, String genre, User user) {}
     private AnimeDTO2 mapAnimeToDTO2(Anime anime) {
-        return new AnimeDTO2(anime.getId(), anime.getAnimeName(), anime.getNrOfEpisodes(), anime.getGenre());
+        return new AnimeDTO2(anime.getId(), anime.getAnimeName(), anime.getNrOfEpisodes(), anime.getGenre(), anime.getUser());
     }
     @GetMapping("/shows")
     @Transactional
