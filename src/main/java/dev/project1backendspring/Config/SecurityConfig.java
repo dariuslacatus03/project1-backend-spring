@@ -35,22 +35,22 @@ public class SecurityConfig {
         return authenticationManagerBuilder.build();
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-                    authorizationManagerRequestMatcherRegistry
-                            .requestMatchers("/api/auth/**")
-                            .permitAll()
-                            .requestMatchers("/health")
-                            .permitAll()
-                            .anyRequest().authenticated();
-                })
-                .sessionManagement(httpSecuritySessionManagementConfigurer -> {
-                    httpSecuritySessionManagementConfigurer
-                            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                })
-                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http.csrf(AbstractHttpConfigurer::disable)
+//                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
+//                    authorizationManagerRequestMatcherRegistry
+//                            .requestMatchers("/api/auth/**")
+//                            .permitAll()
+//                            .requestMatchers("/health")
+//                            .permitAll()
+//                            .anyRequest().authenticated();
+//                })
+//                .sessionManagement(httpSecuritySessionManagementConfigurer -> {
+//                    httpSecuritySessionManagementConfigurer
+//                            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//                })
+//                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+//        return http.build();
+//    }
 }
