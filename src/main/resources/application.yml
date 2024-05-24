@@ -14,3 +14,7 @@ spring:
     url: jdbc:mysql://root:afvSDhXBNNQPsfBzOQCpjWTKAXZdRKWp@monorail.proxy.rlwy.net:27666/railway
     username: root
     password: afvSDhXBNNQPsfBzOQCpjWTKAXZdRKWp
+
+server:
+  port: 8080
+  address: 0.0.0.0
