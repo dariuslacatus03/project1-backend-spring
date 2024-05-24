@@ -4,6 +4,7 @@ import dev.project1backendspring.model.Anime;
 import dev.project1backendspring.model.RepositoryException;
 import dev.project1backendspring.model.User;
 import dev.project1backendspring.service.AnimeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,24 +21,14 @@ import java.util.stream.Collectors;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 @RequestMapping("/")
 @EnableScheduling
+@RequiredArgsConstructor
 public class AnimeController {
 
-    @Autowired
     private final AnimeService animeService;
-
-    @Autowired
     private SimpMessagingTemplate messagingTemplate;
-
-    @Autowired
-    public AnimeController(AnimeService animeService, SimpMessagingTemplate simpMessagingTemplate)
-    {
-        this.animeService = animeService;
-        this.messagingTemplate = simpMessagingTemplate;
-    }
-
 
 
 
